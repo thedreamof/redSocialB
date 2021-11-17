@@ -1,28 +1,50 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PublicationDTO } from './dto/publication.dto';
+import { AddLikeDTO, PublicationDTO } from './dto/publication.dto';
 import { IPublication } from './interfaces/publication.interface';
 
 @Injectable()
 export class PublicationsService {
+  constructor(
+    @InjectModel('Publications')
+    private readonly publicationModel: Model<IPublication>,
+  ) {}
 
-    constructor(@InjectModel('Publications') private readonly publicationModel: Model<IPublication> ) { }
+  public async create(DTO: PublicationDTO): Promise<IPublication> {
+    return await new this.publicationModel(DTO).save();
+  }
 
-    public async create( DTO: PublicationDTO ): Promise<IPublication> {
-        return await new this.publicationModel(DTO).save();
-    }
+  public async getAll(): Promise<IPublication[]> {
+    return await this.publicationModel.find({}, { password: 0 });
+  }
 
-    public async getAll(): Promise<IPublication[]> {
-        return await this.publicationModel.find({}, { password: 0 });
-    }
+  public async get(id: string): Promise<IPublication> {
+    return await this.publicationModel.findOne({ id });
+  }
 
-    public async get( id: string ): Promise<IPublication> {
-        return await this.publicationModel.findOne({id});
-    }
+  public async getPublicationsUser(idUser: string): Promise<IPublication[]> {
+    return await this.publicationModel.find({ 'userCreated.idUser': idUser });
+  }
 
-    public async delete( id: string ): Promise<IPublication> {
-        return await this.publicationModel.findByIdAndDelete(id);
-    }
-    
+  public async addLike(id: string, DTO: AddLikeDTO): Promise<IPublication> {
+    return await this.publicationModel.findOneAndUpdate(
+      { _id: id },
+      { $addToSet: { likes: DTO } },
+      { new: true },
+    );
+  }
+
+  public async deleteLike(id: string, DTO: AddLikeDTO): Promise<IPublication> {
+    console.log(id);
+    console.log(DTO);
+    return await this.publicationModel.findOneAndUpdate(
+      { _id: id },
+      { $pull: { likes: { id: DTO.id } } },
+      { new: true },
+    );
+  }
+  public async delete(id: string): Promise<IPublication> {
+    return await this.publicationModel.findByIdAndDelete(id);
+  }
 }

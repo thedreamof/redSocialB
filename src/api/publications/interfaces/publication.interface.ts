@@ -20,5 +20,10 @@ class User {
     idUser: string;
     username: string;
     avatar: string;
-    like: boolean;
+}
+
+export interface IAddLikeDTO {
+    id: string;
+    username: string;
+    avatar: string;
 }

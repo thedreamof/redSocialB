@@ -45,10 +45,10 @@ export class AuthController {
             }
 
             const payload = {
-                id: user.id,
+                idUser: user.id,
                 username: user.username,
                 name: user.name,
-                lastName: user.lastname,
+                lastname: user.lastname,
                 avatar: user.avatar,
             };
 

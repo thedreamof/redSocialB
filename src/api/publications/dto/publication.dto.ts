@@ -17,5 +17,10 @@ class User {
     idUser: string;
     username: string;
     avatar: string;
-    like: boolean;
+}
+
+export class AddLikeDTO {
+    id: string;
+    username: string;
+    avatar: string;
 }
