@@ -20,7 +20,13 @@ class User {
 }
 
 export class AddLikeDTO {
-  id: string;
+  idUser: string;
+  username: string;
+  avatar: string;
+}
+
+export class DeleteLikeDTO {
+  idUser: string;
   username: string;
   avatar: string;
 }

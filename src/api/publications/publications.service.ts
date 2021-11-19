@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import {
   AddCommentDTO,
   AddLikeDTO,
+  DeleteLikeDTO,
   PublicationDTO,
 } from './dto/publication.dto';
 import { IPublication } from './interfaces/publication.interface';
@@ -58,10 +59,13 @@ export class PublicationsService {
     );
   }
 
-  public async deleteLike(id: string, DTO: AddLikeDTO): Promise<IPublication> {
+  public async deleteLike(
+    id: string,
+    DTO: DeleteLikeDTO,
+  ): Promise<IPublication> {
     return await this.publicationModel.findOneAndUpdate(
       { _id: id },
-      { $pull: { likes: { id: DTO.id } } },
+      { $pull: { likes: { idUser: DTO.idUser } } },
       { new: true },
     );
   }
