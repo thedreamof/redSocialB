@@ -14,6 +14,7 @@ class Comment {
     description: string;
     users: User;
     likes: User[];
+    createAt: Date;
 }
 
 class User {

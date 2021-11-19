@@ -23,8 +23,16 @@ export class UsersService {
     return await this.usersModel.findOne({ username }, { password: 0 });
   }
 
+  public async getById(id: string): Promise<IUser> {
+    return await this.usersModel.findById(id, { password: 0 });
+  }
+
   public async update(id: string, DTO: UserUpdateDTO): Promise<IUser> {
     return await this.usersModel.findByIdAndUpdate(id, DTO);
+  }
+
+  public async updateAvatar(id: string, avatar: string): Promise<IUser> {
+    return await this.usersModel.findByIdAndUpdate(id, { avatar: avatar });
   }
 
   public async delete(id: string): Promise<IUser> {

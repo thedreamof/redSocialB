@@ -9,7 +9,10 @@ export interface IUser extends Document {
     description: string;
 }
 
-export interface IUserBasic extends Document {
-    username: string;
-    avatar: string;
+export interface IUserBasic {
+    idUser?: string;
+    username?: string;
+    avatar?: string;
+    name?: string;
+    lastname?: string;
 }

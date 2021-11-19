@@ -10,7 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/guards/jwt.guard';
-import { AddLikeDTO, PublicationDTO } from './dto/publication.dto';
+import {
+  AddCommentDTO,
+  AddLikeDTO,
+  PublicationDTO,
+} from './dto/publication.dto';
 import { PublicationsService } from './publications.service';
 
 @Controller('publications')
@@ -78,6 +82,20 @@ export class PublicationsController {
   private async deleteLike(@Param('id') id: string, @Body() DTO: AddLikeDTO) {
     try {
       const publication = await this.publicationService.deleteLike(id, DTO);
+      return publication;
+    } catch (error) {
+      console.log(error);
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  @Put(':id/addComment')
+  private async addComment(
+    @Param('id') id: string,
+    @Body() DTO: AddCommentDTO,
+  ) {
+    try {
+      const publication = await this.publicationService.addComment(id, DTO);
       return publication;
     } catch (error) {
       console.log(error);

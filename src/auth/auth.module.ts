@@ -12,10 +12,12 @@ import { UsersService } from 'src/api/users/users.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{
-      name: 'Users',
-      schema: UserSchema,
-    }]),
+    MongooseModule.forFeature([
+      {
+        name: 'Users',
+        schema: UserSchema,
+      },
+    ]),
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
@@ -25,13 +27,13 @@ import { UsersService } from 'src/api/users/users.service';
         secret: configService.get<string>(JWT_SECRET),
         signOptions: {
           expiresIn: 7200,
-        }
+        },
       }),
       inject: [ConfigService],
-    })
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, ConfigService, JwtStrategy, UsersService],
-  exports: [PassportModule, JwtStrategy,],
+  exports: [PassportModule, JwtStrategy],
 })
-export class AuthModule { }
+export class AuthModule {}

@@ -8,20 +8,20 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UserDTO, UserUpdateDTO } from './dtos/user.dto';
-import { PublicationDTO } from '../publications/dto/publication.dto';
-import { JwtAuthGuard } from 'src/guards/jwt.guard';
+import { PublicationsService } from '../publications/publications.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly publicationsService: PublicationsService,
+  ) {}
 
   @Post()
   private async createUser(@Body() DTO: UserDTO) {
-    console.log(DTO);
     try {
       const user = await this.usersService.get(DTO.username);
       if (user)
@@ -29,9 +29,9 @@ export class UsersController {
 
       DTO.password = await hash(DTO.password, 10);
       const newUser = await this.usersService.create(DTO);
-      return { status: 'success', data: newUser };
+      return newUser;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new BadRequestException(error.message);
     }
   }
@@ -41,16 +41,16 @@ export class UsersController {
   private async getUsers() {
     try {
       const users = await this.usersService.getAll();
-      return { status: 'success', data: users };
+      return users;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
   }
 
-  @Get(':username')
-  private async getUser(@Param('username') username: string) {
+  @Get(':id')
+  private async getUser(@Param('id') id: string) {
     try {
-      const users = await this.usersService.get(username);
+      const users = await this.usersService.getById(id);
       return users;
     } catch (error) {
       throw new BadRequestException(error.message);
@@ -62,21 +62,60 @@ export class UsersController {
     @Param('id') id: string,
     @Body() DTO: UserUpdateDTO,
   ) {
-    console.log(DTO);
     try {
       const user = await this.usersService.update(id, DTO);
+      await this.publicationsService.updateUserInfo(id, {
+        ...DTO,
+        idUser: id,
+      });
       return user;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new BadRequestException(error.message);
     }
   }
+
+  // @Put(':id/avatar')
+  // private async uploadAvatar(@Param('id') id: string, @Body() avatar: string) {
+  //   try {
+  //     const user = await this.usersService.updateAvatar(id, avatar);
+  //     return user;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
+
+  // @UseInterceptors(
+  //   FileInterceptor('file', {
+  //     storage: diskStorage({
+  //       destination: './upload',
+  //       filename: function (req, file, cb) {
+  //         cb(null, file.originalname + '_' + Date.now());
+  //       },
+  //     }),
+  //   }),
+  // )
+  // @Put(':id/avatar')
+  // private async uploadAvatar(
+  //   @Param('id') id: string,
+  //   @UploadedFile() file: Express.Multer.File,
+  // ) {
+  //   try {
+  //     const avatarUrl = file.fieldname;
+  //     const avatar = await this.usersService.updateAvatar(id, avatarUrl);
+  //     return avatar;
+  //   } catch (error) {
+  //     console.error(error);
+  //     throw new BadRequestException(error.message);
+  //   }
+  // }
 
   @Delete(':id')
   private async deleteUser(@Param('id') id: string) {
     try {
       const user = await this.usersService.delete(id);
-      return { status: 'success', data: user };
+      return user;
     } catch (error) {
       throw new BadRequestException(error.message);
     }
