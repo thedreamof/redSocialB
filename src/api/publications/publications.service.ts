@@ -32,8 +32,6 @@ export class PublicationsService {
   }
 
   public async updateUserInfo(idUser: string, user: unknown): Promise<any> {
-    console.log('User id', idUser.toString());
-    console.log('User updateInfo', user);
     return await this.publicationModel.updateMany(
       { 'userCreated.idUser': idUser.toString() },
       { $set: { userCreated: user } },
@@ -61,8 +59,6 @@ export class PublicationsService {
   }
 
   public async deleteLike(id: string, DTO: AddLikeDTO): Promise<IPublication> {
-    console.log(id);
-    console.log(DTO);
     return await this.publicationModel.findOneAndUpdate(
       { _id: id },
       { $pull: { likes: { id: DTO.id } } },

@@ -17,13 +17,13 @@ import {
 } from './dto/publication.dto';
 import { PublicationsService } from './publications.service';
 
+@UseGuards(JwtAuthGuard)
 @Controller('publications')
 export class PublicationsController {
   constructor(private readonly publicationService: PublicationsService) {}
 
   @Post()
   private async create(@Body() DTO: PublicationDTO) {
-    console.log(DTO);
     try {
       const publication = await this.publicationService.create(DTO);
       return publication;
@@ -33,7 +33,6 @@ export class PublicationsController {
     }
   }
 
-  // @UseGuards(JwtAuthGuard)
   @Get()
   private async getPublications() {
     try {
